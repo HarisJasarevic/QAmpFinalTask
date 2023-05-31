@@ -1,0 +1,11 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+
+<suite name="Roads test" verbose="1" >
+    <parameter name="browser" value="chrome"/>
+    <test name="PlaceLab_FinalTask" >
+        <classes>
+            <class name="com.QAmp.HarisJasarevic.tests.LoginTestWithValidCredentials"></class>
+            <class name="com.QAmp.HarisJasarevic.tests.RoadAnalysisTest"></class>
+        </classes>
+    </test>
+</suite>

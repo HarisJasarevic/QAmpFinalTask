@@ -1,0 +1,367 @@
+{
+  "info": {
+    "_postman_id": "f94c9200-7d89-44fd-acbc-d9d35ffa5a2c",
+    "name": "PlaceLab API Testing",
+    "description": "# PlaceLab API Testing Collection\n\n## Introduction\n\nThe \"PlaceLab API Testing\" collection is a set of API requests designed to test the functionality of the PlaceLab API. This documentation provides an overview of the collection and focuses on the \"Road Analysis Report - Smoke Test\" folder.\n\n## Conclusion\n\nThe \"Road Analysis - Smoke Test\" folder within the \"PlaceLab API Testing\" collection focuses on testing the road analysis functionality of the PlaceLab API. By executing the requests in this folder and reviewing the responses, you can ensure the proper functioning of the road analysis feature.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "23441909"
+  },
+  "item": [
+    {
+      "name": "Road Analyisis - Smoke Test",
+      "item": [
+        {
+          "name": "Generate Auth Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var responseJSON = JSON.parse(responseBody);\r",
+                  "pm.environment.set(\"accessToken\", responseJSON.api_token);\r",
+                  "\r",
+                  "pm.test(\"Verify Authentication response\", () => {\r",
+                  "\r",
+                  "pm.expect(pm.response.code).to.eql(201)\r",
+                  "\r",
+                  "})"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "{{email}}",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseURL}}/api/v2/sessions",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "sessions"
+              ]
+            },
+            "description": "### Request 1: POST Generate Auth Token\n\n- Description: Generates an authentication token to access the PlaceLab API.\n- Request Method: POST\n- EndFragment/api/v2/sessions\n- Headers:\n    - application/x-www-form-urlencoded\n- Body:\n    - Provides email and password (from PlaceLab environment) in the JSON format.\n- Response:\n    - Status 200: OK - Returns the authentication token.\n    - Status 400: Bad Request - Indicates an invalid request or missing parameters.\n- Auth token:\n    - Recived authentication token is saved as \"accesstoken\" into PlaceLab Environment trough tests"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Road Analysis Report",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var responseJSON = JSON.parse(responseBody);\r",
+                  "pm.environment.set(\"reportID\", responseJSON.id);\r",
+                  "\r",
+                  "pm.test(\"Verify Authentication response\", () => {\r",
+                  "\r",
+                  "pm.expect(pm.response.code).to.eql(201)\r",
+                  "\r",
+                  "})"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "QAmpFinalTask/src/test/resources/roads_sample_NewYork.txt"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseURL}}/api/v2/reports/road_analysis?name=Road%20Analysis%20Report%20{{$randomInt}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "reports",
+                "road_analysis"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "Road%20Analysis%20Report%20{{$randomInt}}"
+                }
+              ]
+            },
+            "description": "### Request 2: POST Create Road Analysis report\n\n- Description: Creates a Road Analysis Report for a specific location provided in uploaded file.\n- Request Method: POST\n- Endpoint: /api/reports/road_analysis\n- Headers:\n    - Authorization: Authorization token (Provided from PlaceLab environment)\n- Body:\n    - Body is in form-data format and provides file from local machine (Located in resources folder) with requested information\n- Response:\n    - Status 200: OK - Returns a success message indicating the road analysis report creation.\n    - Status 400: Bad Request - Indicates an invalid request or missing parameters.\n    - Status 401: Unauthorized - Indicates authentication failure."
+          },
+          "response": []
+        },
+        {
+          "name": "Check Road Analysis Report",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var responseJSON = JSON.parse(responseBody);\r",
+                  "\r",
+                  "pm.test(\"Stastus code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "if (responseJSON.state != \"FINISHED\") {\r",
+                  "\r",
+                  "    console.log(\"Retry request\");\r",
+                  "    setTimeout(retryRequest, 30000);\r",
+                  "    return;\r",
+                  "} else {\r",
+                  "    validateResponse();\r",
+                  "    return;\r",
+                  "}\r",
+                  "\r",
+                  "function retryRequest () {\r",
+                  "    if (responseJSON.state != \"INVALID FILE\") {\r",
+                  "        postman.setNextRequest(pm.info.requestId);\r",
+                  "    } else {\r",
+                  "        validateResponse();\r",
+                  "        return;\r",
+                  "    }\r",
+                  "}\r",
+                  "\r",
+                  "function validateResponse () {\r",
+                  "    pm.test(\"Verify response\", () => {\r",
+                  "        pm.expect(pm.response.code).to.eql(200);\r",
+                  "        pm.expect(responseJSON.state).to.a('string');\r",
+                  "        pm.expect(responseJSON.state).to.eql('FINISHED');\r",
+                  "    });\r",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}api/v2/reports/{{reportID}}/status",
+              "host": [
+                "{{baseURL}}api"
+              ],
+              "path": [
+                "v2",
+                "reports",
+                "{{reportID}}",
+                "status"
+              ]
+            },
+            "description": "### Request 3: GET Check Road Analysis report\n\n- Description: Retrieves the status of a Road Analysis Report for a specific location.\n- Request Method: GET\n- Endpoint: `/api/v2/reports/{reportId}/status`\n- Headers:\n    - Authorization: Authorization token (Provided from PlaceLab environment)\n- Path Parameters:\n    - `reportId`: The unique identifier of the road analysis report (Provided from PlaceLab environemnt)\n- Response:\n    - Status 200: OK - Returns the status of the Road Analysis Report\n    - Test: Provided test in this request handles the posible errors and retrys the request (with set timeout of 30 seconds because of time needed to create report) until status of request is \"FINISHED\"\n    - Status 400: Bad Request - Indicates an invalid request or missing parameters.\n    - Status 401: Unauthorized - Indicates authentication failure.\n    - Status 404: Not Found - Indicates that the road analysis report with the specified ID was not found."
+          },
+          "response": []
+        },
+        {
+          "name": "Download Road Analysis Report",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Check response status code\", function () {\r",
+                  "    var statusCode = pm.response.code;\r",
+                  "    switch (statusCode) {\r",
+                  "        case 200:\r",
+                  "            // Success - no further action required\r",
+                  "            break;\r",
+                  "        case 400:\r",
+                  "            pm.expect.fail(\"Bad request: \" + pm.response.status);\r",
+                  "            break;\r",
+                  "        case 401:\r",
+                  "            pm.expect.fail(\"Unauthorized: \" + pm.response.status);\r",
+                  "            break;\r",
+                  "        case 403:\r",
+                  "            pm.expect.fail(\"Forbidden: \" + pm.response.status);\r",
+                  "            break;\r",
+                  "        case 404:\r",
+                  "            pm.expect.fail(\"Not found resource: \" + pm.response.status);\r",
+                  "            break;\r",
+                  "        case 409:\r",
+                  "            pm.expect.fail(\"Conflict: \" + pm.response.status);\r",
+                  "            break;\r",
+                  "        case 422:\r",
+                  "            pm.expect.fail(\"Unprocessable entity: \" + pm.response.status);\r",
+                  "            break;\r",
+                  "        case 501:\r",
+                  "            pm.expect.fail(\"Not implemented: \" + pm.response.status);\r",
+                  "            break;\r",
+                  "        case 520:\r",
+                  "            pm.expect.fail(\"Unknown error: \" + pm.response.status);\r",
+                  "            break;\r",
+                  "        default:\r",
+                  "            pm.expect.fail(\"Unhandled status code: \" + pm.response.status);\r",
+                  "            break;\r",
+                  "    }\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}api/v2/reports/{{reportID}}/download",
+              "host": [
+                "{{baseURL}}api"
+              ],
+              "path": [
+                "v2",
+                "reports",
+                "{{reportID}}",
+                "download"
+              ]
+            },
+            "description": "### Request 4: GET Download Road analysis report\n\n- Description: Downloads a Road Analysis Report for a specific location.\n- Request Method: GET\n- Endpoint: `/api/v2/reports/{reportId}/download`\n- Headers:\n    - Authorization: Authorization token (Provided from PlaceLab environment)\n- Path Parameters:\n    - `reportId`: The unique identifier of the road analysis report. (Provided from PlaceLab environment)\n    - Tests: In this request test handles all possible errors\n- Response - Possible responses and errors for requested APIs are:\n    - StartFragment\n        - 200: OK\n        - 400: Bad request\n        - 401: Unauthorized\n        - 403: ForbiddenThis error can happen if user authentication failed.\n        - 404: Not found resource\n        - 409: Conflict(Conflict error can happen if a user is trying to download a result file for a report that has not finished processing yet.)\n        - 422: Unprocessable entity(Unprocessable entity error signalizes that the user has made a mistake with the params needed for the action. The mistake can be an erroneous param name, an erroneous param type or a wrong number of params.)\n        - 501: Not implemented\n        - 520: Unknown errorEndFragment"
+          },
+          "response": [
+            {
+              "name": "Download Road Analysis Result",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "{{accessToken}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseURL}}api/v2/reports/{{reportID}}/download",
+                  "host": [
+                    "{{baseURL}}api"
+                  ],
+                  "path": [
+                    "v2",
+                    "reports",
+                    "{{reportID}}",
+                    "download"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "plain",
+              "header": [
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "Content-Type: text/csv"
+                },
+                {
+                  "key": "Transfer-Encoding",
+                  "value": "chunked"
+                },
+                {
+                  "key": "Status",
+                  "value": "200 OK"
+                },
+                {
+                  "key": "Cache-Control",
+                  "value": "max-age=0, private, must-revalidate"
+                },
+                {
+                  "key": "Strict-Transport-Security",
+                  "value": "max-age=31536000; includeSubDomains"
+                },
+                {
+                  "key": "X-Request-Id",
+                  "value": "6dca91bd-5ab9-4812-a4c2-6597fd3d82c1"
+                },
+                {
+                  "key": "Content-Disposition",
+                  "value": "attachment; filename=Road_Analysis_Report_881_output.csv"
+                },
+                {
+                  "key": "Etag",
+                  "value": "W/\"830d0a1104e5deaabd2477401eb4076e\""
+                },
+                {
+                  "key": "X-Runtime",
+                  "value": "0.193165"
+                },
+                {
+                  "key": "Date",
+                  "value": "Wed, 31 May 2023 12:39:00 GMT"
+                },
+                {
+                  "key": "X-Powered-By",
+                  "value": "Phusion Passenger(R) 6.0.8"
+                },
+                {
+                  "key": "Server",
+                  "value": "nginx/1.18.0 + Phusion Passenger(R) 6.0.8"
+                },
+                {
+                  "key": "Via",
+                  "value": "1.1 vegur"
+                }
+              ],
+              "cookie": [],
+              "body": "RECORD_ID|STATUS_DRIVING|STATUS_PEDESTRIAN\n34567|Valid|No Data\n"
+            }
+          ]
+        }
+      ],
+      "description": "## Road Analysis - Smoke Test Folder\n\nThe \"Road Analysis - Smoke Test\" folder contains API requests related to road analysis functionality. These requests are designed to perform a smoke test that contains login to PlaceLab and testing on the road analysis feature of the PlaceLab API. Below are the details of the API requests in this folder."
+    }
+  ]
+}

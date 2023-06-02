@@ -5,11 +5,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindAll;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
-
 import java.time.Duration;
 import java.util.List;
 
@@ -22,12 +20,10 @@ public class QueriesPage extends BasePage {
     private final static By LANDED_REPORTS_PAGE = By.id("queries-nav-item");
     private final static By REPORT_PAGE_HEADER = By.linkText("Reports");
     private final static By REPORT_PAGE_TABLE = By.xpath("//div[@class='main-content']");
-    static String reportID = ReportIDHolder.getReportID();
-    private final static By FIND_REPORT_CHECKBOX = By.partialLinkText(String.valueOf(reportID));
-    private final static By DELETE_ICON = By.cssSelector("#action-delete > a > 1");
+    private final static By DELETE_ICON = By.cssSelector("#action-delete > a > i");
     private final static By CONFIRM_DELETE_REPORT = By.xpath("//*[@id='confirm-link']");
     private final static By REPORT_CHECKBOXES = By.cssSelector("#table_queries > tbody > tr > td.large > div");
-
+    private final static By DELETE_CONFIRMATION_MESSAGE = By.xpath("//div[@class='alert alert-success']");
 
     public QueriesPage(final WebDriver driver) {
         super(driver);
@@ -48,9 +44,11 @@ public class QueriesPage extends BasePage {
     }
 
     public void deleteReport( ) {
-        waitUntilClickable(getReportCheckbox(reportID)).click();
+        getReportCheckbox(ReportIDHolder.getReportID()).click();
         waitUntilClickable(DELETE_ICON).click();
         waitUntilClickable(CONFIRM_DELETE_REPORT).click();
+        final boolean isDeleteConfirmationMessageDisplayed = driver.findElement(DELETE_CONFIRMATION_MESSAGE).isDisplayed();
+        Assert.assertTrue(isDeleteConfirmationMessageDisplayed, "Validate delete report confirmation message is displayed");
     }
 
     private WebElement getReportCheckbox (final String reportID) {

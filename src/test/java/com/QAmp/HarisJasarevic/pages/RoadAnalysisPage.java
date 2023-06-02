@@ -1,13 +1,10 @@
 package com.QAmp.HarisJasarevic.pages;
 
-import com.github.javafaker.Faker;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
-
 import java.time.Duration;
-import java.util.Locale;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,7 +13,6 @@ public class RoadAnalysisPage extends BasePage {
 
     private static WebDriverWait wait;
     private WebDriver driver;
-    private final Faker faker = new Faker(Locale.US);
     private final Random random = new Random();
     private String reportID;
     private final static String EXPECTED_PAGE_TITLE = "PlaceLab - demo";
@@ -43,7 +39,9 @@ public class RoadAnalysisPage extends BasePage {
 
     public void populateRoadAnalysisReportForm () {
         driver.findElement(REPORT_NAME).sendKeys("Road Analysis Report " + random.nextInt(9999));
-        String filePath = "C:\\Users\\haris\\OneDrive\\Desktop\\Workspace\\QAmpFinalTask\\src\\test\\resources\\roads_sample.txt";
+//        String filePath = "C:\\Users\\haris\\OneDrive\\Desktop\\Workspace\\QAmpFinalTask\\src\\test\\resources\\roads_sample.txt";
+        String filePath = "C:\\Users\\haris\\OneDrive\\Desktop\\Workspace\\QAmpFinalTask\\src\\test\\resources\\roads_sample_NewYork.txt";
+//        String filePath = "C:\\Users\\haris\\OneDrive\\Desktop\\Workspace\\QAmpFinalTask\\src\\test\\resources\\roads_sample_Sarajevo.txt";
         driver.findElement(FILE_DROPZONE).sendKeys(filePath);
         waitUntilClickable(CREATE_REPORT_BTN).click();
 

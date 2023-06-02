@@ -5,7 +5,6 @@ import com.QAmp.HarisJasarevic.pages.NavigationPage;
 import com.QAmp.HarisJasarevic.pages.QueriesPage;
 import com.QAmp.HarisJasarevic.pages.RoadAnalysisPage;
 import com.QAmp.HarisJasarevic.utils.BaseTest;
-import org.testng.ITestContext;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
@@ -29,8 +28,8 @@ public class RoadAnalysisTest extends BaseTest {
     }
 
     @Parameters( { "email", "password" } )
-    @Test(priority = 2, description = "Login with valid credentials and create Road Analysis report")
-    public void roadAnalysisReport (final String email, final String password, final ITestContext context) {
+    @Test(priority = 2, description = "SMOKE TEST, Login with valid credentials, create and delete Road Analysis report")
+    public void roadAnalysisReport (final String email, final String password) {
 
         final String expectedUserRole = "Group Admin";
 
@@ -56,22 +55,10 @@ public class RoadAnalysisTest extends BaseTest {
         //Validate queries page content
         queriesPage.validateQueriesPageIsOpen();
 
-        //Open created report
-        //queriesPage.openCreatedReport();
-
         //Delete report
-        //queriesPage.deleteReport();
+        queriesPage.deleteReport();
 
-
-
-
-
-
-
-
-
-
-
-
+        //Sign out
+        navigationPage.userSignOut();
     }
 }

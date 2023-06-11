@@ -43,7 +43,7 @@ To run the test cases:
 `bash`
 `Copy code`
 
-`mvn clean verify -Demail="haris.jasarevic@hotmail.com" -Dpassword="Tijana0306!?!?"`
+`mvn clean verify -Demail="haris.*********@hotmail.com" -Dpassword="Ti**********!?"`
 
 IMPORTANT NOTE: As project is private and under supervision of ATLANTBH, this information are only shared in this private repository and can be used only from ATLANTBH authorized personell.
 4. The tests will be executed using the specified browser (default is Chrome).
@@ -69,11 +69,11 @@ The project includes the following test cases:
 Contributions to this project are welcome. If you find any issues or have suggestions for improvements, please create a pull request or submit an issue on the project repository.
 
 Added contributors to this project are:
-* medzida.mustafic@atlantbh.com
-* nejla.maksumic@atlanbh.com
-* tarik.basic@atlantbh.com
-* bilal.cehic@atlantbh.com
-* gorjan.kalauzovic@atlantbh.com
+* medzida.********@atlantbh.com
+* nejla.********@atlanbh.com
+* tarik.*****@atlantbh.com
+* bilal.*****@atlantbh.com
+* gorjan.**********@atlantbh.com
 
 ### **_License_**
 
